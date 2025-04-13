@@ -2,17 +2,21 @@ from storages.backends.s3 import S3Storage
 from PIL import Image
 import io
 import os
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from typing import Tuple, Optional
 
 
 class BaseWebPS3Storage(S3Storage):
     """Base storage class with common WebP conversion logic"""
-    # Default settings that can be overridden by subclasses
     MAX_DIMENSIONS: Tuple[int, int] = (1920, 1080)  # (width, height)
     QUALITY: int = 80
     ALLOWED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.webp')
+    
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('bucket_name', os.getenv('AWS_STORAGE_BUCKET_NAME'))
+        kwargs.setdefault('access_key', os.getenv('AWS_ACCESS_KEY_ID'))
+        kwargs.setdefault('secret_key', os.getenv('AWS_SECRET_KEY'))
+        super().__init__(*args, **kwargs)
     
     def _convert_to_webp(self, image: Image.Image, quality: Optional[int] = None) -> io.BytesIO:
         """Convert image to WebP format with specified quality"""
@@ -24,7 +28,8 @@ class BaseWebPS3Storage(S3Storage):
         image.save(
             webp_content, 
             format='WEBP', 
-            quality=quality or self.QUALITY
+            quality=quality or self.QUALITY,
+            method=6
         )
         webp_content.seek(0)
         return webp_content
@@ -53,9 +58,12 @@ class BaseWebPS3Storage(S3Storage):
     
     def _save(self, name: str, content: io.BytesIO) -> str:
         """Save the file, processing it if it's an image"""
+        if not name:
+            raise ValueError("File name is required")
+            
         name, content = self._process_image(name, content)
-        print(f"Saving {name} to S3, {self.QUALITY}, {self.MAX_DIMENSIONS}")
         return super()._save(name, content)
+
 
 class DefaultWebPS3Storage(BaseWebPS3Storage):
     """Default storage backend for all images"""
@@ -68,10 +76,11 @@ class UserAvatarStorage(BaseWebPS3Storage):
     MAX_DIMENSIONS = (240, 200)
     QUALITY = 85
 
+
 class CategoryImageStorage(BaseWebPS3Storage):
     """Storage backend for category images"""
-    MAX_DIMENSIONS = (400, 400)
-    QUALITY = 80
+    MAX_DIMENSIONS = (800, 800)
+    QUALITY = 90
 
 
 class ProductImageStorage(BaseWebPS3Storage):
