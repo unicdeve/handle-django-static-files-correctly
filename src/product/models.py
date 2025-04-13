@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from category.models import Category
-
+from django_assets.storage_backends import ProductImageStorage
 
 class Product(models.Model):
     name = models.CharField(_('name'), max_length=200)
@@ -13,7 +13,7 @@ class Product(models.Model):
         related_name='products',
         verbose_name=_('category')
     )
-    image = models.ImageField(_('image'), upload_to='products/', null=True, blank=True)
+    image = models.ImageField(_('image'), upload_to='products/', null=True, blank=True, storage=ProductImageStorage)
     is_available = models.BooleanField(_('is available'), default=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)

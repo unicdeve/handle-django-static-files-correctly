@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from django_assets.storage_backends import CategoryImageStorage
 
 class Category(models.Model):
     name = models.CharField(_('name'), max_length=100)
-    image = models.ImageField(_('image'), upload_to='categories/', null=True, blank=True)
+    image = models.ImageField(_('image'), upload_to='categories/', null=True, blank=True, storage=CategoryImageStorage)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
