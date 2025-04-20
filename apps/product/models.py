@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from category.models import Category
+from apps.category.models import Category
 from django_assets.storage_backends import ProductImageStorage
 
 class Product(models.Model):
