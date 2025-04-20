@@ -10,6 +10,7 @@ class User(AbstractUser):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
+
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')

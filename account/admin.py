@@ -28,7 +28,6 @@ class CustomUserAdmin(UserAdmin):
 
     def avatar_preview(self, obj):
         if obj.avatar:
-            print(obj.avatar)
             return format_html(f'<img src="{obj.avatar.url}" style="max-width: 50px; max-height: 50px;" />')
         return None
     
