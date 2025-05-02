@@ -29,7 +29,6 @@ class ProductAdmin(admin.ModelAdmin):
 
     def image_preview(self, obj):
         if obj.image:
-            print(obj.image)
             return format_html(f'<img src="{obj.image.url}" style="max-width: 50px; max-height: 50px;" />')
         return None
     

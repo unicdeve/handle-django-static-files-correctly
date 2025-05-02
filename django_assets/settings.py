@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     "whitenoise.runserver_nostatic",
+    'django.contrib.staticfiles',
     'apps.account',
     'apps.category',
     'apps.product',
@@ -131,15 +131,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
 STORAGES = {
   "default": {
         "BACKEND": "django_assets.storage_backends.DefaultWebPS3Storage",
-        "OPTIONS": {
-            "access_key": os.environ.get('AWS_ACCESS_KEY_ID'),
-            "secret_key": os.environ.get('AWS_SECRET_KEY'),
-            "bucket_name": os.environ.get('AWS_STORAGE_BUCKET_NAME'),
-            "querystring_auth": False,
-        },
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",

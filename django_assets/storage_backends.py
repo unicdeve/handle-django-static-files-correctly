@@ -2,21 +2,13 @@ from storages.backends.s3 import S3Storage
 from PIL import Image
 import io
 import os
-from django.utils.translation import gettext_lazy as _
 from typing import Tuple, Optional
-
 
 class BaseWebPS3Storage(S3Storage):
     """Base storage class with common WebP conversion logic"""
     MAX_DIMENSIONS: Tuple[int, int] = (1920, 1080)  # (width, height)
     QUALITY: int = 80
     ALLOWED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.webp')
-    
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('bucket_name', os.getenv('AWS_STORAGE_BUCKET_NAME'))
-        kwargs.setdefault('access_key', os.getenv('AWS_ACCESS_KEY_ID'))
-        kwargs.setdefault('secret_key', os.getenv('AWS_SECRET_KEY'))
-        super().__init__(*args, **kwargs)
     
     def _convert_to_webp(self, image: Image.Image, quality: Optional[int] = None) -> io.BytesIO:
         """Convert image to WebP format with specified quality"""
@@ -67,7 +59,6 @@ class BaseWebPS3Storage(S3Storage):
 
 class DefaultWebPS3Storage(BaseWebPS3Storage):
     """Default storage backend for all images"""
-    MAX_DIMENSIONS = (1920, 1080)
     QUALITY = 75
 
 
